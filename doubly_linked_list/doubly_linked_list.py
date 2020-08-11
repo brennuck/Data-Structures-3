@@ -8,6 +8,18 @@ class ListNode:
         self.value = value
         self.next = next
             
+    # $%$Start
+    """
+    Optional `delete` method on `ListNode` to make subsequent
+    methods more DRY.
+    """
+    def delete(self):
+        if self.prev:
+            self.prev.next = self.next
+        if self.next:
+            self.next.prev = self.prev
+    # $%$End
+            
 """
 Our doubly-linked list class. It holds references to 
 the list's head and tail nodes.
@@ -27,24 +39,29 @@ class DoublyLinkedList:
     the old head node's previous pointer accordingly.
     """
     def add_to_head(self, value):
-        new_node = ListNode(value, None, None) # Wrap given value in a ListNode
-        self.length += 1 # adds the new node to the length of the list
-        if not self.head and not self.tail: # if the list is initially empty, set both head and tail to the new node
+        # $%$Start
+        new_node = ListNode(value, None, None)
+        self.length += 1
+        if not self.head and not self.tail:
             self.head = new_node
             self.tail = new_node
         else:
-            new_node.next = self.head # the node next to the new node is the current node
-            self.head.prev = new_node # the node in front of the current head is the new node
-            self.head = new_node # the new node is now the head
-
-
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+        # $%$End
+        
     """
     Removes the List's current head node, making the
     current head's next node the new head of the List.
     Returns the value of the removed Node.
     """
     def remove_from_head(self):
-        pass
+        # $%$Start
+        value = self.head.value
+        self.delete(self.head)
+        return value
+        # $%$End
             
     """
     Wraps the given value in a ListNode and inserts it 
@@ -52,15 +69,17 @@ class DoublyLinkedList:
     the old tail node's next pointer accordingly.
     """
     def add_to_tail(self, value):
-        new_node = ListNode(value, None, None) # Wrap given value in a ListNode
-        self.length += 1 # adds the new node to the length of the list
-        if not self.head and not self.tail: # if the list is initially empty, set both head and tail to the new node
+        # $%$Start
+        new_node = ListNode(value, None, None)
+        self.length += 1
+        if not self.tail and not self.head:
+            self.tail = new_node
             self.head = new_node
-            self.tail = new_node
         else:
-            new_node.prev = self.tail 
-            self.tail.next = new_node 
+            new_node.prev = self.tail
+            self.tail.next = new_node
             self.tail = new_node
+        # $%$End
             
     """
     Removes the List's current tail node, making the 
@@ -68,32 +87,73 @@ class DoublyLinkedList:
     Returns the value of the removed Node.
     """
     def remove_from_tail(self):
-        pass
+        # $%$Start
+        value = self.tail.value
+        self.delete(self.tail)
+        return value
+        # $%$End
             
     """
     Removes the input node from its current spot in the 
     List and inserts it as the new head node of the List.
     """
     def move_to_front(self, node):
-        pass
+        # $%$Start
+        if node is self.head:
+            return
+        value = node.value
+        if node is self.tail:
+            self.remove_from_tail()
+        else:
+            node.delete()
+            self.length -= 1
+        self.add_to_head(value)
+        # $%$End
         
     """
     Removes the input node from its current spot in the 
     List and inserts it as the new tail node of the List.
     """
     def move_to_end(self, node):
-        pass
+        # $%$Start
+        if node is self.tail:
+            return
+        value = node.value
+        if node is self.head:
+            self.remove_from_head()
+        else:
+            node.delete()
+            self.length -= 1
+        self.add_to_tail(value)
+        # $%$End
 
-    """
-    Deletes the input node from the List, preserving the 
-    order of the other elements of the List.
-    """
     def delete(self, node):
-        pass
+        # $%$Start
+        if not self.head and not self.tail:
+            return
+        if self.head is self.tail:
+            self.head = None
+            self.tail = None
+        elif self.head is node:
+            self.head = node.next
+            node.delete()
+        elif self.tail is node:
+            self.tail = node.prev
+            node.delete()
+        else:
+            node.delete()
+        self.length -= 1
+        # $%$End
 
-    """
-    Finds and returns the maximum value of all the nodes 
-    in the List.
-    """
     def get_max(self):
-        pass
+        # $%$Start
+        if not self.head:
+            return None
+        max_val = self.head.value
+        current = self.head
+        while current:
+            if current.value > max_val:
+                max_val = current.value
+            current = current.next
+        return max_val
+        # $%$End
